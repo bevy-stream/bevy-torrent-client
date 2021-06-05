@@ -11,6 +11,7 @@ type Torrent struct {
 	meta    TorrentMeta
 }
 
+// sync is an idempotent function that brings a torrent into sync with its metadata
 func (t Torrent) sync() {
 	if t.meta.IsDownloading {
 		t.torrent.DownloadAll()
