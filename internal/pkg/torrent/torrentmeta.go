@@ -8,13 +8,15 @@ import (
 type TorrentMeta struct {
 	gorm.Model
 	InfoHash      string `json:"infoHash" gorm:"uniqueIndex"`
-	IsSeeding     bool
-	IsDownloading bool
+	IsUploading   bool   `json:"isUploading"`
+	IsDownloading bool   `json:"isDownloading"`
 }
 
 func defaultTorrentMeta() TorrentMeta {
 	return TorrentMeta{
-		IsSeeding:     false,
+		Model:         gorm.Model{},
+		InfoHash:      "",
+		IsUploading:   false,
 		IsDownloading: false,
 	}
 }
@@ -71,4 +73,9 @@ func (s *TorrentMetaService) GetOrCreateTorrentMeta(infoHash string) (TorrentMet
 func (s *TorrentMetaService) CreateTorrentMeta(torrentMeta TorrentMeta) (TorrentMeta, error) {
 	result := s.DB.Create(&torrentMeta)
 	return torrentMeta, result.Error
+}
+
+func (s *TorrentMetaService) Update(meta TorrentMeta) (TorrentMeta, error) {
+	result := s.DB.Model(&meta).Where("info_hash = ?", meta.InfoHash).Updates(meta)
+	return meta, result.Error
 }
