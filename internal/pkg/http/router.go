@@ -43,7 +43,7 @@ func NewRouter(torrentService torrent.TorrentService) *gin.Engine {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			c.JSON(http.StatusOK, gin.H{"torrent": torrent})
+			c.JSON(http.StatusOK, torrent)
 			return
 		}
 
@@ -53,7 +53,7 @@ func NewRouter(torrentService torrent.TorrentService) *gin.Engine {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			c.JSON(http.StatusOK, gin.H{"torrent": torrent})
+			c.JSON(http.StatusOK, torrent)
 			return
 		}
 
@@ -61,12 +61,33 @@ func NewRouter(torrentService torrent.TorrentService) *gin.Engine {
 
 	// Get a single torrent
 	r.GET("/torrents/:id", func(c *gin.Context) {
-		c.String(http.StatusNotImplemented, "Not implemented")
+		id := c.Param("id")
+		torrent, err := torrentService.GetOne(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, torrent)
 	})
 
 	// Update a single torrent
 	r.PUT("/torrents/:id", func(c *gin.Context) {
-		c.String(http.StatusNotImplemented, "Not implemented")
+		id := c.Param("id")
+		meta := torrent.TorrentMeta{}
+		if err := c.ShouldBind(&meta); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		meta.InfoHash = id
+
+		torrent, err := torrentService.Update(meta)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, torrent)
 	})
 
 	// Delete a single torrent
