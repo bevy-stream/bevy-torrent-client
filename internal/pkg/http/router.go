@@ -2,6 +2,8 @@ package http
 
 import (
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/bevy-stream/bevy-torrent-client/internal/pkg/torrent"
 	"github.com/gin-gonic/gin"
@@ -69,6 +71,31 @@ func NewRouter(torrentService torrent.TorrentService) *gin.Engine {
 		}
 
 		c.JSON(http.StatusOK, torrent)
+	})
+
+	// Get a stream for a single file in a torrent
+	r.GET("/torrents/:id/:file_index", func(c *gin.Context) {
+		id := c.Param("id")
+		fileIndexStr := c.Param("file_index")
+		fileIndex, err := strconv.Atoi(fileIndexStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		torrent, err := torrentService.GetOne(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		file, err := torrent.GetFile(fileIndex)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		http.ServeContent(c.Writer, c.Request, file.Path(), time.Time{}, file.NewReader())
 	})
 
 	// Update a single torrent
