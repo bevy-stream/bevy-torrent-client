@@ -43,7 +43,7 @@ func NewRouter(torrentService torrent.TorrentService) *gin.Engine {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			c.JSON(http.StatusOK, gin.H{"torrent": torrent})
+			c.JSON(http.StatusOK, torrent)
 			return
 		}
 
@@ -53,7 +53,7 @@ func NewRouter(torrentService torrent.TorrentService) *gin.Engine {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			c.JSON(http.StatusOK, gin.H{"torrent": torrent})
+			c.JSON(http.StatusOK, torrent)
 			return
 		}
 
@@ -68,7 +68,7 @@ func NewRouter(torrentService torrent.TorrentService) *gin.Engine {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"torrent": torrent})
+		c.JSON(http.StatusOK, torrent)
 	})
 
 	// Update a single torrent
@@ -87,7 +87,7 @@ func NewRouter(torrentService torrent.TorrentService) *gin.Engine {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"torrent": torrent})
+		c.JSON(http.StatusOK, torrent)
 	})
 
 	// Delete a single torrent
