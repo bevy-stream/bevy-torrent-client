@@ -1,26 +1,56 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+import useTorrentsService from './services/useTorrentsService';
 
-function App() {
+export default function BasicExample() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React! Hooray
-        </a>
-      </header>
+    <Router>
+      <div>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+        </ul>
+
+        <hr />
+
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
+  );
+}
+
+function Home() {
+  return (
+    <div>
+      <h2>Home</h2>
+      <Torrents />
     </div>
   );
 }
 
-export default App;
+const Torrents: React.FC<{}> = () => {
+  const service = useTorrentsService();
+
+  return (
+    <div>
+      {service.status === 'loading' && <div>Loading...</div>}
+      {service.status === 'loaded' &&
+        service.payload.results.map(torrent => (
+          <div key={torrent.infoHash}>{torrent.infoHash}</div>
+        ))}
+      {service.status === 'error' && (
+        <div>Error reaching backend: {service.error.toString()}</div>
+      )}
+    </div>
+  );
+};
