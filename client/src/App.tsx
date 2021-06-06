@@ -6,36 +6,35 @@ import {
 } from "react-router-dom";
 import { Row, Col } from 'react-bootstrap';
 import Torrents from './Torrents';
+import TorrentInfo from './TorrentInfo';
+import { Torrent } from './types/Torrent';
 
 export default function Site() {
   return (
     <Router>
-      <div className="h-100">
-        <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-        </Switch>
-      </div>
+      <Switch>
+        <Route exact path="/">
+          <Home />
+        </Route>
+      </Switch>
     </Router>
   );
 }
 
 function Home() {
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState<Torrent | undefined>(undefined);
 
   return (
-    <Row className="h-100">
+    <Row className="justify-content-center h-100">
       <Col xs={2} className="border"></Col>
-      <Col xs={10} className="">
-        <div className="h-100">
-          <Row className="h-75">
+      <Col xs={10}>
+        <div className="h-100 d-flex flex-column">
+          <Row className="justify-content-center flex-grow-1 border">
             <Torrents selected={selected} setSelected={setSelected} />
           </Row>
-          <Row className="border-top h-25">
-            <Col xs={12} className="">
-            </Col>
-          </Row>
+          {selected &&
+            <TorrentInfo torrent={selected} />
+          }
         </div>
       </Col>
     </Row>

@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import useTorrentsService from './services/useTorrentsService';
 import { humanFileSize } from './utils';
 import { Table, ProgressBar } from 'react-bootstrap';
@@ -6,7 +7,7 @@ import { Torrent } from './types/Torrent'
 
 type TorrentsProps = {
   selected?: Torrent,
-  setSelected: (torrent: Torrent) => null
+  setSelected: Dispatch<SetStateAction<Torrent | undefined>>
 }
 
 const Torrents: React.FC<TorrentsProps> = ({ selected, setSelected }) => {
