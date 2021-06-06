@@ -17,9 +17,11 @@ func (t Torrent) sync() {
 	if t.meta.IsPaused {
 		t.torrent.CancelPieces(0, t.torrent.NumPieces())
 		t.torrent.DisallowDataUpload()
+		t.torrent.DisallowDataDownload()
 	} else {
 		t.torrent.DownloadAll()
 		t.torrent.AllowDataUpload()
+		t.torrent.AllowDataDownload()
 	}
 }
 
