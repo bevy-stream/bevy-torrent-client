@@ -14,15 +14,12 @@ type Torrent struct {
 
 // sync is an idempotent function that brings a torrent into sync with its metadata
 func (t Torrent) sync() {
-	if t.meta.IsDownloading {
-		t.torrent.DownloadAll()
-	} else {
+	if t.meta.IsPaused {
 		t.torrent.CancelPieces(0, t.torrent.NumPieces())
-	}
-	if t.meta.IsUploading {
-		t.torrent.AllowDataUpload()
-	} else {
 		t.torrent.DisallowDataUpload()
+	} else {
+		t.torrent.DownloadAll()
+		t.torrent.AllowDataUpload()
 	}
 }
 

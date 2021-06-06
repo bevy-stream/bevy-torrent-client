@@ -5,19 +5,19 @@ import (
 	"gorm.io/gorm"
 )
 
+// REMEMBER: For any field to be captured on db updates you must edit the Update function as it uses a map instead of the
+// raw struct
 type TorrentMeta struct {
 	gorm.Model
-	InfoHash      string `json:"infoHash" gorm:"uniqueIndex"`
-	IsUploading   bool   `json:"isUploading"`
-	IsDownloading bool   `json:"isDownloading"`
+	InfoHash string `json:"infoHash" gorm:"uniqueIndex"`
+	IsPaused bool   `json:"isPaused"`
 }
 
 func defaultTorrentMeta() TorrentMeta {
 	return TorrentMeta{
-		Model:         gorm.Model{},
-		InfoHash:      "",
-		IsUploading:   false,
-		IsDownloading: false,
+		Model:    gorm.Model{},
+		InfoHash: "",
+		IsPaused: false,
 	}
 }
 
@@ -76,6 +76,8 @@ func (s *TorrentMetaService) CreateTorrentMeta(torrentMeta TorrentMeta) (Torrent
 }
 
 func (s *TorrentMetaService) Update(meta TorrentMeta) (TorrentMeta, error) {
-	result := s.DB.Model(&meta).Where("info_hash = ?", meta.InfoHash).Updates(meta)
+	result := s.DB.Model(&meta).Where("info_hash = ?", meta.InfoHash).Updates(map[string]interface{}{
+		"IsPaused": meta.IsPaused,
+	})
 	return meta, result.Error
 }

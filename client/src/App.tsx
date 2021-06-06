@@ -1,9 +1,5 @@
 import { useState } from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Row, Col } from 'react-bootstrap';
 import Torrents from './Torrents';
 import TorrentInfo from './TorrentInfo';
@@ -32,12 +28,9 @@ function Home() {
           <Row className="justify-content-center flex-grow-1 border">
             <Torrents selected={selected} setSelected={setSelected} />
           </Row>
-          {selected &&
-            <TorrentInfo torrent={selected} />
-          }
+          {selected && <TorrentInfo torrent={selected} />}
         </div>
       </Col>
     </Row>
   );
 }
-

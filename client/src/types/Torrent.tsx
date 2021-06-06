@@ -9,7 +9,6 @@ interface Info {
 
 export interface Torrent {
   infoHash: string;
-  isUploading: boolean;
-  isDownloading: boolean;
+  isPaused: boolean;
   info: Info;
 }
