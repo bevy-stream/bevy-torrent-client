@@ -27,16 +27,18 @@ func (t Torrent) sync() {
 }
 
 func (t Torrent) MarshalJSON() ([]byte, error) {
-	type Stats struct {
+	type Info struct {
 		BytesCompleted int64    `json:"bytesCompleted"`
 		BytesMissing   int64    `json:"bytesMissing"`
 		Files          []string `json:"files"`
 		Peers          int      `json:"peers"`
+		Name           string   `json:"name"`
+		Length         int64    `json:"length"`
 	}
 
 	type JSONOutput struct {
 		TorrentMeta
-		Stats Stats `json:"stats"`
+		Stats Info `json:"info"`
 	}
 
 	files := []string{}
@@ -44,11 +46,13 @@ func (t Torrent) MarshalJSON() ([]byte, error) {
 		files = append(files, file.DisplayPath())
 	}
 
-	return json.Marshal(JSONOutput{t.meta, Stats{
+	return json.Marshal(JSONOutput{t.meta, Info{
 		BytesCompleted: t.torrent.BytesCompleted(),
 		BytesMissing:   t.torrent.BytesMissing(),
 		Files:          files,
 		Peers:          len(t.torrent.PeerConns()),
+		Name:           t.torrent.Name(),
+		Length:         t.torrent.Length(),
 	}})
 }
 

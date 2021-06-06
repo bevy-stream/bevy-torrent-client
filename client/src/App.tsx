@@ -1,24 +1,16 @@
-import React from "react";
+import { useState } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
 } from "react-router-dom";
-import useTorrentsService from './services/useTorrentsService';
+import { Row, Col } from 'react-bootstrap';
+import Torrents from './Torrents';
 
-export default function BasicExample() {
+export default function Site() {
   return (
     <Router>
-      <div>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-        </ul>
-
-        <hr />
-
+      <div className="h-100">
         <Switch>
           <Route exact path="/">
             <Home />
@@ -30,27 +22,23 @@ export default function BasicExample() {
 }
 
 function Home() {
+  const [selected, setSelected] = useState(null);
+
   return (
-    <div>
-      <h2>Home</h2>
-      <Torrents />
-    </div>
+    <Row className="h-100">
+      <Col xs={2} className="border"></Col>
+      <Col xs={10} className="">
+        <div className="h-100">
+          <Row className="h-75">
+            <Torrents selected={selected} setSelected={setSelected} />
+          </Row>
+          <Row className="border-top h-25">
+            <Col xs={12} className="">
+            </Col>
+          </Row>
+        </div>
+      </Col>
+    </Row>
   );
 }
 
-const Torrents: React.FC<{}> = () => {
-  const service = useTorrentsService();
-
-  return (
-    <div>
-      {service.status === 'loading' && <div>Loading...</div>}
-      {service.status === 'loaded' &&
-        service.payload.results.map(torrent => (
-          <div key={torrent.infoHash}>{torrent.infoHash}</div>
-        ))}
-      {service.status === 'error' && (
-        <div>Error reaching backend: {service.error.toString()}</div>
-      )}
-    </div>
-  );
-};

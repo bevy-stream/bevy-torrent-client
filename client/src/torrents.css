@@ -1,0 +1,12 @@
+table {
+  width: 100%;
+}
+
+.table-wrapper-scroll-y {
+  width: 100%;
+  display: block;
+}
+
+.progress-bar {
+  min-width: 2em;
+}
