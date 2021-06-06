@@ -14,29 +14,30 @@ type Torrent struct {
 
 // sync is an idempotent function that brings a torrent into sync with its metadata
 func (t Torrent) sync() {
-	if t.meta.IsDownloading {
-		t.torrent.DownloadAll()
-	} else {
+	if t.meta.IsPaused {
 		t.torrent.CancelPieces(0, t.torrent.NumPieces())
-	}
-	if t.meta.IsUploading {
-		t.torrent.AllowDataUpload()
-	} else {
 		t.torrent.DisallowDataUpload()
+		t.torrent.DisallowDataDownload()
+	} else {
+		t.torrent.DownloadAll()
+		t.torrent.AllowDataUpload()
+		t.torrent.AllowDataDownload()
 	}
 }
 
 func (t Torrent) MarshalJSON() ([]byte, error) {
-	type Stats struct {
+	type Info struct {
 		BytesCompleted int64    `json:"bytesCompleted"`
 		BytesMissing   int64    `json:"bytesMissing"`
 		Files          []string `json:"files"`
 		Peers          int      `json:"peers"`
+		Name           string   `json:"name"`
+		Length         int64    `json:"length"`
 	}
 
 	type JSONOutput struct {
 		TorrentMeta
-		Stats Stats `json:"stats"`
+		Stats Info `json:"info"`
 	}
 
 	files := []string{}
@@ -44,11 +45,13 @@ func (t Torrent) MarshalJSON() ([]byte, error) {
 		files = append(files, file.DisplayPath())
 	}
 
-	return json.Marshal(JSONOutput{t.meta, Stats{
+	return json.Marshal(JSONOutput{t.meta, Info{
 		BytesCompleted: t.torrent.BytesCompleted(),
 		BytesMissing:   t.torrent.BytesMissing(),
 		Files:          files,
 		Peers:          len(t.torrent.PeerConns()),
+		Name:           t.torrent.Name(),
+		Length:         t.torrent.Length(),
 	}})
 }
 

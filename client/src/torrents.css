@@ -1,0 +1,17 @@
+table {
+  width: 100%;
+}
+
+.table-wrapper-scroll-y {
+  width: 100%;
+  display: block;
+}
+
+.progress-bar {
+  min-width: 2em;
+}
+
+.info-table > tbody > tr > td {
+  border-top: none;
+  padding: 0.2em;
+}

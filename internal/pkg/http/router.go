@@ -6,11 +6,13 @@ import (
 	"time"
 
 	"github.com/bevy-stream/bevy-torrent-client/internal/pkg/torrent"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func NewRouter(torrentService torrent.TorrentService) *gin.Engine {
 	r := gin.Default()
+	r.Use(cors.Default())
 
 	// Ping test
 	r.GET("/ping", func(c *gin.Context) {
@@ -24,7 +26,7 @@ func NewRouter(torrentService torrent.TorrentService) *gin.Engine {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"torrents": torrents})
+		c.JSON(http.StatusOK, gin.H{"results": torrents})
 	})
 
 	// Create new torrent
